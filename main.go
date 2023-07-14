@@ -8,8 +8,9 @@ import (
 	"time"
 )
 
-var flagTibberToken = flag.String("tibberToken", "TODO", "Your Tibber developer API token")
-var flagAwtrixIP = flag.String("awtrixIP", "", "The IPv4 address of your Awtrix light device")
+var tibberDemoToken = "5K4MVS-OjfWhK_4yrjOlFe1F6kJXPVf7eQYggo8ebAE"
+var flagTibberToken = flag.String("tibberToken", tibberDemoToken, "Your Tibber developer API token")
+var flagAwtrixIP = flag.String("awtrixIP", "127.0.0.1", "The IPv4 address of your Awtrix light device")
 
 var customAppName = "tibberPrices"
 var chartBarCount = 36 - 12
@@ -18,6 +19,9 @@ var knownPrices []tibberPrice
 
 func main() {
 	flag.Parse()
+	if *flagTibberToken == tibberDemoToken {
+		log.Print("Using Tibber demo token. Please provide your own developer token via --tibberToken for real data")
+	}
 
 	for {
 		updatePrices()
