@@ -46,7 +46,11 @@ func readPrices(token string) ([]tibberPrice, error) {
 		return []tibberPrice{}, err
 	}
 
-	allPrices := append(prices.Data.Viewer.Homes[0].CurrentSubscription.PriceInformation.Today)
+	if len(prices.Data.Viewer.Homes) == 0 {
+		return []tibberPrice{}, fmt.Errorf("could not find any homes in %+v", prices)
+	}
+
+	allPrices := prices.Data.Viewer.Homes[0].CurrentSubscription.PriceInformation.Today
 	allPrices = append(allPrices, prices.Data.Viewer.Homes[0].CurrentSubscription.PriceInformation.Tomorrow...)
 
 	// Tomorrow's prices are sometimes empty

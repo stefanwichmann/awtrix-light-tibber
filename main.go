@@ -9,8 +9,8 @@ import (
 )
 
 var tibberDemoToken = "5K4MVS-OjfWhK_4yrjOlFe1F6kJXPVf7eQYggo8ebAE"
-var flagTibberToken = flag.String("tibberToken", tibberDemoToken, "Your Tibber developer API token")
-var flagAwtrixIP = flag.String("awtrixIP", "127.0.0.1", "The IPv4 address of your Awtrix light device")
+var flagTibberToken = flag.String("tibberToken", lookupEnv("TIBBER_TOKEN", tibberDemoToken), "Your Tibber developer API token")
+var flagAwtrixIP = flag.String("awtrixIP", lookupEnv("AWTRIX_IP", "127.0.0.1"), "The IPv4 address of your Awtrix light device")
 
 var customAppName = "tibberPrices"
 var chartBarCount = 36 - 12
@@ -56,6 +56,11 @@ func updatePrices() {
 }
 
 func updateDisplay() {
+	if len(knownPrices) == 0 {
+		log.Printf("No prices available, skipping display update")
+		return
+	}
+
 	historicPrices, upcomingPrices := splitPrices(knownPrices)
 
 	// Limit historic prices to the last 4
