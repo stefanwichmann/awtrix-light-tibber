@@ -1,0 +1,7 @@
+services:
+  awtrix-light-tibber:
+    image: stefanwichmann/awtrix-light-tibber
+    restart: unless-stopped
+    environment:
+      - TIBBER_TOKEN=insert_your_API_token_here
+      - AWTRIX_IP=127.0.0.1
