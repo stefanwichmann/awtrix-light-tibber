@@ -3,5 +3,6 @@ services:
     image: stefanwichmann/awtrix-light-tibber
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
       - TIBBER_TOKEN=insert_your_API_token_here
       - AWTRIX_IP=127.0.0.1
