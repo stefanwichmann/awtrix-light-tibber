@@ -63,9 +63,9 @@ func updateDisplay() {
 
 	historicPrices, upcomingPrices := splitPrices(knownPrices)
 
-	// Limit historic prices to the last 2
-	if len(historicPrices) >= 2 {
-		historicPrices = historicPrices[len(historicPrices)-2:]
+	// Limit historic prices to the last 4
+	if len(historicPrices) >= 4 {
+		historicPrices = historicPrices[len(historicPrices)-4:]
 	}
 	relevantPrices := append(historicPrices, upcomingPrices...)
 	if len(relevantPrices) > chartBarCount {
