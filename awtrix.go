@@ -58,7 +58,7 @@ func (u *AwtrixDrawCommand) MarshalJSON() ([]byte, error) {
 	case "df":
 		return marshalDrawRectangleFilled(*u), nil
 	default:
-		return []byte{}, errors.New(fmt.Sprintf("Unknown draw command: %s", u.Command))
+		return []byte{}, fmt.Errorf("unknown draw command: %s", u.Command)
 	}
 }
 
