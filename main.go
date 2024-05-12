@@ -63,13 +63,19 @@ func updateDisplay() {
 
 	historicPrices, upcomingPrices := splitPrices(knownPrices)
 
-	// Limit historic prices to the last 4
-	if len(historicPrices) >= 4 {
-		historicPrices = historicPrices[len(historicPrices)-4:]
+	// Limit historic prices to the last 2
+	if len(historicPrices) >= 2 {
+		historicPrices = historicPrices[len(historicPrices)-2:]
 	}
 	relevantPrices := append(historicPrices, upcomingPrices...)
 	if len(relevantPrices) > chartBarCount {
 		relevantPrices = relevantPrices[:chartBarCount]
+	}
+
+	// Print prices
+	log.Printf("Identified the following relevant prices")
+	for _, price := range relevantPrices {
+		log.Printf("Starting at %s: %f", price.StartsAt, price.Total)
 	}
 
 	commandsText := []AwtrixDrawCommand{{Command: "dt", X: 0, Y: 1, Text: fmt.Sprintf("%d¢", roundedPrice(historicPrices[len(historicPrices)-1].Total)), Color: "#FFFFFF"}}
