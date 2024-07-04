@@ -48,9 +48,6 @@ func updatePrices() {
 		return
 	}
 
-	log.Print("Detecting price changes...")
-	detectPriceChanges(knownPrices, prices)
-
 	log.Print("Updating known prices")
 	knownPrices = prices
 }
@@ -163,15 +160,5 @@ func mapPriceToColor(price tibberPrice) string {
 		return "#da785f"
 	default:
 		return "#fa6e6e"
-	}
-}
-
-func detectPriceChanges(oldPrices []tibberPrice, newPrices []tibberPrice) {
-	for _, newPrice := range newPrices {
-		for _, oldPrice := range oldPrices {
-			if newPrice.StartsAt == oldPrice.StartsAt && newPrice.Total != oldPrice.Total {
-				log.Printf("Price for %s changed from %f to %f", newPrice.StartsAt, oldPrice.Total, newPrice.Total)
-			}
-		}
 	}
 }
