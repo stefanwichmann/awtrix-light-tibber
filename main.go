@@ -24,7 +24,8 @@ func main() {
 	}
 
 	for {
-		updatePrices()
+		fetchPrices()
+		updateKnowPrices()
 		updateDisplay()
 
 		nextUpdate := durationUntilNextFullHour()
@@ -40,7 +41,7 @@ func durationUntilNextFullHour() time.Duration {
 	return time.Until(nextFullHour)
 }
 
-func updatePrices() {
+func fetchPrices() {
 	log.Println("Fetching Tibber prices...")
 	prices, err := readPrices(*flagTibberToken)
 	if err != nil {
@@ -48,13 +49,11 @@ func updatePrices() {
 		return
 	}
 
-	log.Print("Updating known prices")
 	knownPrices = prices
 }
 
-func updateDisplay() {
+func updateKnowPrices() {
 	if len(knownPrices) == 0 {
-		log.Printf("No prices available, skipping display update")
 		return
 	}
 
@@ -65,6 +64,13 @@ func updateDisplay() {
 		historicPrices = historicPrices[len(historicPrices)-4:]
 	}
 	relevantPrices := append(historicPrices, upcomingPrices...)
+
+	log.Print("Updating known prices")
+	knownPrices = relevantPrices
+}
+
+func updateDisplay() {
+	relevantPrices := knownPrices
 	if len(relevantPrices) > chartBarCount {
 		relevantPrices = relevantPrices[:chartBarCount]
 	}
@@ -75,12 +81,18 @@ func updateDisplay() {
 		log.Printf("Starting at %s: %f", price.StartsAt, price.Total)
 	}
 
-	commandsText := []AwtrixDrawCommand{{Command: "dt", X: 0, Y: 1, Text: fmt.Sprintf("%d¢", roundedPrice(historicPrices[len(historicPrices)-1].Total)), Color: "#FFFFFF"}}
+	currentPriceString := "?"
+	currentPrice, err := currentPrice(relevantPrices)
+	if err == nil {
+		currentPriceString = fmt.Sprintf("%d¢", roundedPrice(currentPrice.Total))
+	}
+
+	commandsText := []AwtrixDrawCommand{{Command: "dt", X: 0, Y: 1, Text: currentPriceString, Color: "#FFFFFF"}}
 	commandsChart := mapToDrawingCommands(relevantPrices)
 	app := AwtrixApp{Draw: append(commandsText, commandsChart...)}
 
 	log.Printf("Drawing %d prices...", len(commandsChart))
-	err := postApplication(*flagAwtrixIP, customAppName, app)
+	err = postApplication(*flagAwtrixIP, customAppName, app)
 	if err != nil {
 		log.Printf("Could not update custom application: %v", err)
 	}
@@ -101,6 +113,16 @@ func splitPrices(prices []tibberPrice) ([]tibberPrice, []tibberPrice) {
 	}
 
 	return historicPrices, upcomingPrices
+}
+
+func currentPrice(prices []tibberPrice) (tibberPrice, error) {
+	for _, price := range prices {
+		if price.StartsAt.Day() == time.Now().Day() && price.StartsAt.Hour() == time.Now().Hour() {
+			return price, nil
+		}
+	}
+
+	return tibberPrice{}, fmt.Errorf("could not find current price")
 }
 
 func mapToDrawingCommands(prices []tibberPrice) []AwtrixDrawCommand {
