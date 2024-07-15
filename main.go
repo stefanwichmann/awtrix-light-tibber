@@ -128,6 +128,10 @@ func currentPrice(prices []tibberPrice) (tibberPrice, error) {
 func mapToDrawingCommands(prices []tibberPrice) []AwtrixDrawCommand {
 	var commands []AwtrixDrawCommand
 
+	if len(prices) == 0 {
+		return commands
+	}
+
 	// Find min and max price
 	minPrice := prices[0].Total
 	maxPrice := prices[0].Total
