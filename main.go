@@ -28,17 +28,9 @@ func main() {
 		updateKnowPrices()
 		updateDisplay()
 
-		nextUpdate := durationUntilNextFullHour()
-		log.Printf("Sleeping for %s", nextUpdate)
-		time.Sleep(nextUpdate)
+		log.Printf("Sleeping for 1 hour")
+		time.Sleep(1 * time.Hour)
 	}
-}
-
-func durationUntilNextFullHour() time.Duration {
-	now := time.Now()
-	nextFullHour := time.Date(now.Year(), now.Month(), now.Day(), now.Hour(), 0, 1, 0, now.Location())
-	nextFullHour = nextFullHour.Add(1 * time.Hour)
-	return time.Until(nextFullHour)
 }
 
 func fetchPrices() {
