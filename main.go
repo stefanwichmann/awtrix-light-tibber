@@ -37,8 +37,7 @@ func fetchPrices() {
 	log.Println("Fetching Tibber prices...")
 	prices, err := readPrices(*flagTibberToken)
 	if err != nil {
-		log.Printf("Could not fetch prices: %v", err)
-		return
+		log.Fatalf("Could not fetch prices: %v", err)
 	}
 
 	knownPrices = prices
@@ -86,7 +85,7 @@ func updateDisplay() {
 	log.Printf("Drawing %d prices...", len(commandsChart))
 	err = postApplication(*flagAwtrixIP, customAppName, app)
 	if err != nil {
-		log.Printf("Could not update custom application: %v", err)
+		log.Fatalf("Could not update custom application: %v", err)
 	}
 }
 
